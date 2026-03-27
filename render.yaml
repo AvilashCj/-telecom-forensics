@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: ai-telecom-forensics
+    env: node
+    buildCommand: "cd frontend && npm install && npm run build && cd ../backend && npm install"
+    startCommand: "cd backend && node index.js"
+    envVars:
+      - key: NODE_VERSION
+        value: 18.17.0
+      - key: MONGODB_URI
+        sync: false

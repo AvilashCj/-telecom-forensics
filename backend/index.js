@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -28,10 +29,13 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/telecom-f
     .then(() => console.log('MongoDB Connected'))
     .catch(err => console.log('MongoDB Connection Error:', err));
 
-app.get('/', (req, res) => {
-    res.send('AI Telecom Forensics API is running...');
-});
+// Serve frontend in production
+app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
+// Handle React routing, return all requests to React app
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/dist/index.html'));
+});
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
