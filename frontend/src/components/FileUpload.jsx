@@ -10,13 +10,15 @@ const FileUpload = ({ onUploadSuccess }) => {
 
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
-    if (selected && selected.name.endsWith('.csv')) {
+    if (selected && selected.name.toLowerCase().endsWith('.csv')) {
       setFile(selected);
       setError('');
     } else {
       setError('Please select a valid CSV file.');
       setFile(null);
     }
+    // Reset the input value so the same file could be selected again if needed
+    e.target.value = null;
   };
 
   const handleUpload = async () => {
@@ -26,15 +28,19 @@ const FileUpload = ({ onUploadSuccess }) => {
 
     const formData = new FormData();
     formData.append('file', file);
+    
+    // Fallback to relative /api if no env var is set
+    const API_URL = import.meta.env.VITE_API_URL || '';
 
     try {
-      const res = await axios.post('/api/analysis/upload', formData, {
+      const res = await axios.post(`${API_URL}/api/analysis/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setSuccess(true);
       if (onUploadSuccess) onUploadSuccess(res.data);
     } catch (err) {
-      setError('Upload failed. Check server connectivity.');
+      console.error("Upload error:", err);
+      setError(err.response?.data?.message || 'Upload failed. Check server connectivity.');
     } finally {
       setLoading(false);
     }
