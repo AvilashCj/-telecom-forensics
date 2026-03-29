@@ -1,11 +1,16 @@
 services:
   - type: web
-    name: ai-telecom-forensics
+    name: forensiq-dashboard
     env: node
+    rootDir: .
     buildCommand: "cd frontend && npm install && npm run build && cd ../backend && npm install"
-    startCommand: "cd backend && node index.js"
+    startCommand: "cd backend && NODE_ENV=production node index.js"
     envVars:
-      - key: NODE_VERSION
-        value: 18.17.0
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
       - key: MONGODB_URI
         sync: false
+      - key: JWT_SECRET
+        generateValue: true
